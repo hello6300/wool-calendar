@@ -1,0 +1,10 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  # docs/ 下是各平台的参考骨架（含未接入的 Firebase / 原生 API），不参与编译与检查
+  exclude:
+    - docs/**
+
+linter:
+  rules:
+    prefer_const_constructors: true

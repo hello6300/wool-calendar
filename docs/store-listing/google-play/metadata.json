@@ -1,0 +1,15 @@
+{
+  "title": "AppForge 示例 – 一套代码，双端上线的工程起点",
+  "short_description": "一套代码，双端上线的工程起点",
+  "full_description": "AppForge 示例（AppForge Demo）一套代码，双端上线的工程起点，面向效率场景，帮助你更高效地完成日常任务。\n\n【核心功能】\n· 示例首页与计数器交互，演示状态管理\n· 内置中英文界面，跟随系统语言切换\n· 端到端演示双端构建、签名与发布流程\n\n【关键词】效率, 工具, 双端, 示例, AppForge\n\n欢迎使用 AppForge 示例，如有建议可通过应用内反馈告诉我们。",
+  "category": "效率",
+  "tags": [
+    "效率",
+    "工具",
+    "双端",
+    "示例",
+    "AppForge"
+  ],
+  "contact_email": "{{support_email}}",
+  "privacy_policy": "{{privacy_policy_url}}"
+}

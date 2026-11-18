@@ -1,0 +1,562 @@
+{
+  "@@locale": "zh",
+  "appName": "羊毛日历",
+  "welcome": "欢迎使用",
+  "home": "首页",
+  "login": "登录",
+  "logout": "退出登录",
+  "settings": "设置",
+  "retry": "重试",
+  "cancel": "取消",
+
+  "woolCalendarTitle": "羊毛日历",
+  "today": "今天",
+  "previousMonth": "上个月",
+  "nextMonth": "下个月",
+  "weekMon": "一",
+  "weekTue": "二",
+  "weekWed": "三",
+  "weekThu": "四",
+  "weekFri": "五",
+  "weekSat": "六",
+  "weekSun": "日",
+
+  "monthLabel": "{year}年{month}月",
+  "@monthLabel": {
+    "placeholders": {
+      "year": {"type": "int"},
+      "month": {"type": "int"}
+    }
+  },
+  "dealCount": "{count} 条",
+  "@dealCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "totalReward": "合计 ¥{amount}",
+  "@totalReward": {
+    "placeholders": {
+      "amount": {"type": "String"}
+    }
+  },
+
+  "addDeal": "记一笔羊毛",
+  "editDeal": "编辑羊毛",
+  "platform": "羊毛平台",
+  "platformHint": "例如：京东、淘宝、招商银行",
+  "platformRequired": "请填写平台",
+  "dealTitle": "标题",
+  "dealTitleHint": "一句话说明是什么活动",
+  "dealTitleRequired": "请填写标题",
+  "dealDetail": "羊毛详情",
+  "dealDetailHint": "活动规则、门槛、时间、券面额等",
+  "dealUrl": "活动链接",
+  "dealUrlHint": "https://",
+  "notes": "攻略备注",
+  "notesHint": "步骤、注意事项、账号要求、避坑点",
+  "amountLabel": "预计收益（元）",
+  "amountInvalid": "请输入有效金额",
+  "dateLabel": "活动日期",
+  "statusLabel": "状态",
+  "statusPlanned": "待参与",
+  "statusDone": "已参与",
+  "statusReceived": "已到账",
+  "statusExpired": "已过期",
+  "quickPlatforms": "常用平台",
+  "quickPlatformValues": "京东,淘宝,拼多多,抖音,快手,美团,支付宝,银行,其他",
+
+  "save": "保存",
+  "delete": "删除",
+  "confirm": "确定",
+  "deleteConfirmTitle": "删除这条记录？",
+  "deleteConfirmBody": "删除后无法恢复。",
+  "saved": "已保存",
+  "deleted": "已删除",
+  "linkCopied": "链接已复制",
+  "copyLink": "复制链接",
+  "emptyDay": "这天还没有羊毛，点右下角 + 记一笔",
+  "emptyDayDevice": "「{name}」这天还没有羊毛，点右下角 + 记一笔",
+  "@emptyDayDevice": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+
+  "startTimeLabel": "开始时间",
+  "endTimeLabel": "结束时间",
+  "timeNotSet": "未设置",
+  "clearTime": "清除时间",
+  "timeRangeLabel": "活动时间",
+  "timeOnlyStart": "{time} 起",
+  "@timeOnlyStart": {
+    "placeholders": {
+      "time": {"type": "String"}
+    }
+  },
+  "timeOnlyEnd": "截止 {time}",
+  "@timeOnlyEnd": {
+    "placeholders": {
+      "time": {"type": "String"}
+    }
+  },
+  "crossDayShort": "跨天",
+  "crossDayHint": "结束时间早于开始时间，按次日计算（适合 20:00-01:00 这类跨天活动）",
+  "remindLabel": "到点提醒",
+  "remindHint": "活动开始 / 结束时弹出系统通知",
+  "remindNoTime": "还没填活动时间，不会触发提醒",
+  "remindDoneHint": "已参与 / 已到账 / 已过期的记录不再提醒",
+
+  "notificationSettings": "提醒设置",
+  "notificationHelp": "填好活动开始 / 结束时间并打开「到点提醒」，到点就会弹出系统通知；点通知可回到当天日历。",
+  "notificationStatus": "通知权限",
+  "exactAlarmStatus": "精确闹钟",
+  "timeZoneLabel": "当前时区",
+  "pendingReminders": "待发提醒",
+  "pendingRemindersValue": "{count} 条",
+  "@pendingRemindersValue": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "statusOn": "已开启",
+  "statusOff": "未开启",
+  "statusUnknown": "未知",
+  "lastReminderError": "最近一次提醒错误",
+  "grantNotification": "开启通知权限",
+  "grantExactAlarm": "去系统设置开启精确闹钟",
+  "sendTestNotification": "发一条测试通知",
+  "scheduleTestReminder": "排一条 1 分钟后的提醒",
+  "resyncReminders": "重新同步全部提醒",
+  "remindersResynced": "提醒已重新同步",
+
+  "reminderChannelName": "羊毛提醒",
+  "reminderChannelDesc": "活动开始 / 结束时间到点提醒",
+  "reminderStartTitle": "羊毛开始：{title}",
+  "@reminderStartTitle": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "reminderStartBody": "{platform} · {time}，点开去看攻略",
+  "@reminderStartBody": {
+    "placeholders": {
+      "platform": {"type": "String"},
+      "time": {"type": "String"}
+    }
+  },
+  "reminderEndTitle": "羊毛即将结束：{title}",
+  "@reminderEndTitle": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "reminderEndBody": "{platform} · {time}，别错过了",
+  "@reminderEndBody": {
+    "placeholders": {
+      "platform": {"type": "String"},
+      "time": {"type": "String"}
+    }
+  },
+  "testNotificationTitle": "通知已开启",
+  "testNotificationBody": "到点提醒会像这样弹出，点通知可回到当天日历",
+  "scheduledTestTitle": "定时提醒测试成功",
+  "scheduledTestBody": "这条通知是 1 分钟前排定的，说明到点提醒链路已生效",
+
+  "importFromCalendar": "从手机日历导入",
+  "deviceCalendarTitle": "手机日历活动",
+  "deviceCalendarHelp": "先选好提取范围，点「提取活动」才会读取手机系统日历；勾选后导入羊毛日历。全程手动，只读，不会修改系统日历。",
+  "calendarPermissionStatus": "日历读取权限",
+  "calendarPermissionDenied": "还没有日历读取权限，先点下面的按钮授权。",
+  "calendarPermissionHint": "授权框里可能同时出现「日历读写」权限：这是读取插件的检查方式，App 只调用读取接口，不会新增、修改或删除系统日历里的任何活动。",
+  "grantCalendarPermission": "允许读取手机日历",
+  "importRangeLabel": "提取范围",
+  "importEventCount": "共 {count} 个活动",
+  "@importEventCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "importAllDay": "全天",
+  "importImported": "已导入",
+  "importSelectAll": "全选",
+  "importClearSelection": "取消全选",
+  "importSelected": "导入选中（{count}）",
+  "@importSelected": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "importLoading": "正在读取手机日历…",
+  "importEmpty": "这个范围内系统日历没有活动，换个范围再提取",
+  "importEmptyNoCalendar": "手机系统里没有任何日历账户，所以读不到活动",
+  "importEmptyFiltered": "日历里有事件，但系统接口一条都读不出来",
+  "importEmptyNoEvents": "日历账户在，但一条日程都读不出来",
+  "importDiagTitle": "诊断信息",
+  "importDiagPermission": "日历权限：{state}",
+  "importDiagPermissionOk": "已授予",
+  "importDiagPermissionNo": "未授予",
+  "importDiagCounts": "系统日历 {calendars} 个 · 可读实例 {instances} 条 · 原始事件 {events} 条",
+  "@importDiagCounts": {
+    "placeholders": {
+      "calendars": {"type": "int"},
+      "instances": {"type": "int"},
+      "events": {"type": "int"}
+    }
+  },
+  "importDiagDevice": "设备：{device} · Android {sdk}",
+  "@importDiagDevice": {
+    "placeholders": {
+      "device": {"type": "String"},
+      "sdk": {"type": "int"}
+    }
+  },
+  "importDiagCalendarList": "读到 {count} 个日历：{names}",
+  "@importDiagCalendarList": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "names": {"type": "String"}
+    }
+  },
+  "importDiagNoCalendar": "系统日历里没有任何账户。多数情况是日历权限被系统的「空白通行证 / 返回空数据」接管了，而不是真的没有日程。",
+  "importDiagFiltered": "系统日历里确实有 {events} 条原始事件，但读取实例的接口返回 0 条。这是手机系统对日历数据的限制，不是本 App 的范围选错了。",
+  "@importDiagFiltered": {
+    "placeholders": {
+      "events": {"type": "int"}
+    }
+  },
+  "importDiagXiaomiHint": "小米 / 红米：设置 → 应用设置 → 应用管理 → 羊毛日历 → 权限管理 → 日历，改为「始终允许」；如果开了「空白通行证」，请关掉。改完回来点「重试提取」。",
+  "importDiagError": "读取过程报错：{error}",
+  "importDiagRecurring": "其中 {count} 条带重复规则（每天/每周重复的日程）",
+  "importDiagTableTotal": "本机日程总数 {count} 条（不分区间）",
+  "@importDiagTableTotal": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "importDiagNoEvents": "这台手机的日历里一条日程都没有：要么权限被系统「返回空数据」接管了，要么日历还没同步到本机。",
+  "importDiagRangeEmpty": "这台手机的日历里共有 {count} 条日程，但没有一条落在所选区间内 —— 换个范围再提取就行，不是读不到。",
+  "@importDiagRangeEmpty": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "importDiagRecurringNoHit": "另外 {count} 条重复日程与区间有交集，但按重复规则展开后，区间内一次都没有发生。",
+  "@importDiagRecurringNoHit": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "importDiagPerCalendar": "按日历：{detail}",
+  "importDiagPerCalendarEmpty": "无",
+  "importDiagPerCalendarItem": "{name} {count} 条",
+  "importDiagCopy": "复制诊断信息",
+  "importDiagCopied": "诊断信息已复制，可以直接发给开发者",
+  "@importDiagError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "importLoadFailed": "读取失败：{error}",
+  "@importLoadFailed": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "importSuccess": "已导入 {count} 条，到点会按开始 / 结束时间提醒",
+  "@importSuccess": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "importAllImported": "这些活动都导入过了",
+  "importViewCalendar": "查看日历",
+  "importRetry": "重试提取",
+  "importFallbackPlatform": "手机日历",
+  "importUntitled": "（无标题活动）",
+  "importEndsAt": "结束：{time}",
+  "@importEndsAt": {
+    "placeholders": {
+      "time": {"type": "String"}
+    }
+  },
+  "importLocation": "地点：{place}",
+  "@importLocation": {
+    "placeholders": {
+      "place": {"type": "String"}
+    }
+  },
+  "importSource": "来源：{calendar}",
+  "@importSource": {
+    "placeholders": {
+      "calendar": {"type": "String"}
+    }
+  },
+  "importedFromDevice": "来自手机日历 · {calendar}",
+  "@importedFromDevice": {
+    "placeholders": {
+      "calendar": {"type": "String"}
+    }
+  },
+
+  "importPresetToday": "今天",
+  "importPresetNext7": "未来 7 天",
+  "importPresetThisMonth": "本月",
+  "importPresetNext30": "未来 30 天",
+  "importPresetCustom": "自定义",
+  "importStartDate": "开始日期",
+  "importEndDate": "结束日期",
+  "importRangeDays": "共 {count} 天",
+  "@importRangeDays": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "importRangeMaxHint": "一次最多提取 366 天，超出会自动缩短",
+  "importExtractAction": "提取活动",
+  "importReExtract": "重新提取",
+  "importNotExtracted": "选好范围后点「提取活动」，才会读取手机日历",
+  "importRangeChanged": "范围已更改，请重新提取活动",
+  "importExtractedRange": "本次提取：{range}",
+  "@importExtractedRange": {
+    "placeholders": {
+      "range": {"type": "String"}
+    }
+  },
+  "importPermissionReady": "日历权限已开启，点「提取活动」开始",
+
+  "deviceLabel": "设备",
+  "defaultDeviceName": "手机",
+  "allDevices": "全部设备",
+  "manageDevices": "设备管理",
+  "deviceHelp": "设备是本地分类标签：同一个活动常常在手机、平板、备用机上各能领一次，按设备分开记就不会混。App 不会读取其它设备的日历。「本机」这台会自动识别（名字默认取机型），换一台手机打开就是那台手机自己；删除其它设备时记录会保留并移到本机。",
+  "deviceFilterTooltip": "按设备筛选",
+  "deviceAssign": "归入设备",
+  "addDevice": "添加设备",
+  "newDeviceTitle": "添加设备",
+  "renameDeviceTitle": "重命名设备",
+  "deviceNameLabel": "设备名称",
+  "deviceNameHint": "例如：平板、备用机、工作手机",
+  "deviceNameRequired": "请填写设备名称",
+  "deviceNameDuplicate": "已经有同名设备了",
+  "renameDevice": "重命名",
+  "deleteDevice": "删除设备",
+  "deviceDefaultBadge": "默认",
+  "deviceThisDeviceBadge": "本机",
+  "deviceIdentityDetected": "已识别本机：{name}",
+  "@deviceIdentityDetected": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "deviceIdentityUnknown": "未能识别本机机型，这台手机的设备标识读不到；记录仍会归到「手机」这台设备。",
+  "deviceDealCount": "{count} 条记录",
+  "@deviceDealCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "deviceDeleteTitle": "删除「{name}」？",
+  "@deviceDeleteTitle": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "deviceDeleteBody": "这台设备下的 {count} 条记录会移到「{defaultName}」，记录本身不会丢失。",
+  "@deviceDeleteBody": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "defaultName": {"type": "String"}
+    }
+  },
+  "deviceCantDeleteDefault": "本机设备不能删除",
+  "deviceRemoved": "已删除设备，{count} 条记录已移到本机",
+  "@deviceRemoved": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+
+  "platformsTitle": "常用平台",
+  "managePlatforms": "管理",
+  "addPlatform": "添加平台",
+  "newPlatformTitle": "添加常用平台",
+  "renamePlatformTitle": "重命名常用平台",
+  "platformNameLabel": "平台名称",
+  "platformNameHint": "例如：盒马、山姆",
+  "platformNameRequired": "请填写平台名称",
+  "platformNameDuplicate": "这个平台已经存在了",
+  "renamePlatform": "重命名",
+  "deletePlatform": "删除平台",
+  "platformDeleteBody": "删除后「{name}」不再出现在常用平台里，已有的历史记录不受影响。",
+  "@platformDeleteBody": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "platformEmptyHint": "还没有常用平台。添加后，记一笔时点一下就能填入平台。",
+
+  "syncSettings": "数据同步",
+  "syncHelpTitle": "WebDAV 同步",
+  "syncHelp": "填 WebDAV 根地址和远端文件路径，目录会自动创建。同步是双向合并：按记录 id 与最后修改时间取较新的副本，删除也会同步。密码只保存在系统加密存储里。",
+  "syncHelpEndpoints": "常见地址：坚果云 https://dav.jianguoyun.com/dav/ ｜ Nextcloud https://域名/remote.php/dav/files/用户名/ ｜ 群晖 http://内网IP:5005/",
+  "syncHelpMkdir": "拿不准文件夹该填什么？点「远端文件路径」右侧的浏览按钮，可直接进账号里看真实目录并选一个。部分 NAS（例如飞牛 fnOS）不允许 App 自动新建目录，会直接回 405：请先在它的「文件管理」里建好目标文件夹并给账号读写权限，再回来选它。",
+  "syncServerUrl": "服务器地址",
+  "syncServerHint": "https://dav.example.com/dav/",
+  "syncServerRequired": "请填写服务器地址",
+  "syncServerInvalid": "地址要以 http:// 或 https:// 开头",
+  "syncUsername": "用户名",
+  "syncPassword": "密码 / 应用密码",
+  "syncPasswordNote": "保存在系统加密存储，不会明文写入应用数据",
+  "syncShowPassword": "显示密码",
+  "syncHidePassword": "隐藏密码",
+  "syncRemotePath": "远端文件路径",
+  "syncRemotePathNote": "相对上面的地址，例如 appforge/wool-sync.json",
+  "syncRemotePathRequired": "请填写远端文件路径",
+  "syncBrowse": "浏览远端文件夹",
+  "syncBrowseTitle": "选择远端文件夹",
+  "syncBrowseRoot": "根目录",
+  "syncBrowseEmpty": "这个文件夹下没有子文件夹",
+  "syncBrowseUse": "用这个文件夹",
+  "syncBrowseRetry": "重试",
+  "syncAuto": "启动时自动同步",
+  "syncAutoHint": "打开 App 后自动拉取并合并，失败不打扰",
+  "syncDailyBackup": "每天首次同步前备份云端文件",
+  "syncDailyBackupHint": "备份成同目录下的 wool-sync-YYYY-MM-DD.json；不新建目录（部分 NAS 不允许 App 建目录）。同步会覆盖云端，留着它才能回到前一天。",
+  "syncBackupDone": "今日已备份：{file}",
+  "@syncBackupDone": {
+    "placeholders": {
+      "file": {"type": "String"}
+    }
+  },
+  "syncBackupDoneToday": "今日已备份",
+  "syncRestore": "恢复备份",
+  "syncRestoreTitle": "选择要恢复的备份",
+  "syncRestoreEmpty": "云端这个目录里还没有备份文件。打开「每天首次同步前备份」再同步一次就会生成。",
+  "syncRestoreDaily": "每日备份",
+  "syncRestoreSafety": "恢复前快照 {time}",
+  "@syncRestoreSafety": {
+    "placeholders": {
+      "time": {"type": "String"}
+    }
+  },
+  "syncRestoreConfirmTitle": "用这份备份覆盖本机？",
+  "syncRestoreConfirmDay": "备份日期：{day}",
+  "@syncRestoreConfirmDay": {
+    "placeholders": {
+      "day": {"type": "String"}
+    }
+  },
+  "syncRestoreConfirmCounts": "备份里 {backup} 条记录 · 本机现在 {local} 条",
+  "@syncRestoreConfirmCounts": {
+    "placeholders": {
+      "backup": {"type": "String"},
+      "local": {"type": "String"}
+    }
+  },
+  "syncRestoreConfirmWarn": "恢复会把本机数据替换成这份备份，并写入云端。恢复前会先把云端现状另存为 {file}。",
+  "@syncRestoreConfirmWarn": {
+    "placeholders": {
+      "file": {"type": "String"}
+    }
+  },
+  "syncRestoreConfirmOk": "恢复",
+  "syncRestoreDone": "已恢复 {deals} 条记录",
+  "@syncRestoreDone": {
+    "placeholders": {
+      "deals": {"type": "String"}
+    }
+  },
+  "syncRestoreSafetySaved": "恢复前的云端数据已存为 {file}",
+  "@syncRestoreSafetySaved": {
+    "placeholders": {
+      "file": {"type": "String"}
+    }
+  },
+  "syncRestoreOtherDevice": "提示：如果另一台设备之后又同步，它那边较新的记录可能被合并回来。",
+  "syncRestoreAborted": "恢复失败，本机数据没有改动",
+  "syncTest": "测试连接",
+  "syncTestOk": "连接成功",
+  "syncNow": "立即同步",
+  "syncRunning": "同步中…",
+  "syncSave": "保存配置",
+  "syncSaved": "配置已保存",
+  "syncClear": "断开同步",
+  "syncClearBody": "只清除服务器地址、账号和密码，本机账本不会被删除。",
+  "syncNever": "还没有同步过",
+  "syncLastAt": "上次同步：{time}",
+  "@syncLastAt": {
+    "placeholders": {
+      "time": {"type": "String"}
+    }
+  },
+  "syncDone": "同步完成",
+  "syncResult": "同步完成：云端拉到 {added} 条 · 上传 {pushed} 条 · 更新 {updated} 条 · 删除 {deleted} 条",
+  "@syncResult": {
+    "placeholders": {
+      "added": {"type": "int"},
+      "pushed": {"type": "int"},
+      "updated": {"type": "int"},
+      "deleted": {"type": "int"}
+    }
+  },
+  "syncInspect": "查看云端数据",
+  "syncInspectTitle": "云端这份文件",
+  "syncInspectMissing": "云端还没有这个文件：下次同步会创建，并把本机记录写上去。",
+  "syncInspectCounts": "{deals} 条记录 · {devices} 台设备 · {platforms} 个常用平台",
+  "@syncInspectCounts": {
+    "placeholders": {
+      "deals": {"type": "String"},
+      "devices": {"type": "String"},
+      "platforms": {"type": "String"}
+    }
+  },
+  "syncInspectGenerated": "文件生成时间：{time}",
+  "@syncInspectGenerated": {
+    "placeholders": {
+      "time": {"type": "String"}
+    }
+  },
+  "syncInspectSize": "文件大小：{size}",
+  "@syncInspectSize": {
+    "placeholders": {
+      "size": {"type": "String"}
+    }
+  },
+  "syncInspectLocal": "本机：{deals} 条记录",
+  "@syncInspectLocal": {
+    "placeholders": {
+      "deals": {"type": "String"}
+    }
+  },
+  "syncInspectSample": "标题：{titles}",
+  "@syncInspectSample": {
+    "placeholders": {
+      "titles": {"type": "String"}
+    }
+  },
+  "syncInspectMore": "等 {count} 条",
+  "@syncInspectMore": {
+    "placeholders": {
+      "count": {"type": "String"}
+    }
+  },
+  "syncInspectClose": "知道了",
+  "syncErrorBadConfig": "请先填写服务器地址和远端路径",
+  "syncErrorAuth": "账号或密码不对（401）",
+  "syncErrorForbidden": "这个账号没有该目录的读写权限（403）",
+  "syncErrorNotFound": "远端地址或目录不存在（404）",
+  "syncErrorNotWebDav": "这个地址不接受 WebDAV 请求（405），多半是填成了网页地址或漏了 /dav 之类的路径",
+  "syncErrorMkdirUnsupported": "远端目录不存在，而且这台服务器不允许 App 自动创建（飞牛 fnOS 就是这样）：请先在网盘里手动新建该文件夹，再回来同步",
+  "syncErrorPathIsFolder": "远端路径指向的是一个文件夹：请在这条路径末尾补上文件名，例如 yangmao/wool-sync.json",
+  "syncErrorUnrecognized": "远端文件不是本 App 的同步文件，已中止以免覆盖",
+  "syncErrorBackupFailed": "今天的云端备份没做成，为避免覆盖云端已中止同步（可在下面关掉「每天首次同步前备份」）",
+  "syncErrorNetwork": "连不上服务器，检查网络与地址",
+  "syncErrorTimeout": "连接超时，稍后再试",
+  "syncErrorServer": "服务器返回错误 {code}",
+  "@syncErrorServer": {
+    "placeholders": {
+      "code": {"type": "int"}
+    }
+  }
+}

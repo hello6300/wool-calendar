@@ -1,0 +1,100 @@
+name: mobile-ci
+
+# PR / main：只做质量门禁与构建产物，绝不上传商店。
+# 真正分发由 release.yml（tag 或手动触发）负责。
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FLUTTER_VERSION: '3.24.5'
+
+jobs:
+  verify:
+    name: Analyze & Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: flutter gen-l10n
+      - run: flutter analyze
+      - run: flutter test
+
+  android:
+    name: Android AAB
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      # 原生壳必须提交进仓库（含 signing / Info.plist / 权限配置），CI 不自动生成
+      - name: Ensure native shells are committed
+        run: |
+          test -f android/build.gradle || { echo "::error::缺少 android/ 原生壳，请先在本地执行 scripts/bootstrap.sh 并提交"; exit 1; }
+      - run: flutter pub get
+      - name: Configure upload key (non-PR only)
+        # 仅本地开发阶段：未开启发布模式时不强制签名 Secrets，AAB 用 debug 签名，
+        # 构建仍成功且不会把 push main 变红。恢复发布：仓库 Variables 加 ENABLE_RELEASE=true。
+        if: github.event_name != 'pull_request' && vars.ENABLE_RELEASE == 'true'
+        env:
+          ANDROID_KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_B64 }}
+          ANDROID_KEYSTORE_PASS: ${{ secrets.ANDROID_KEYSTORE_PASS }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASS: ${{ secrets.ANDROID_KEY_PASS }}
+        run: |
+          test -n "$ANDROID_KEYSTORE_B64" || { echo "::error::缺少 ANDROID_KEYSTORE_B64，请在仓库 Secrets 配置"; exit 1; }
+          echo "$ANDROID_KEYSTORE_B64" | base64 -d > android/app/upload-keystore.jks
+          cat > android/key.properties <<PROPS
+          storePassword=$ANDROID_KEYSTORE_PASS
+          keyPassword=$ANDROID_KEY_PASS
+          keyAlias=$ANDROID_KEY_ALIAS
+          storeFile=upload-keystore.jks
+          PROPS
+      - name: Build release AAB
+        run: flutter build appbundle --release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-aab-${{ github.sha }}
+          path: build/app/outputs/bundle/release/app-release.aab
+          retention-days: 14
+
+  ios:
+    name: iOS build (unsigned)
+    # 当前阶段只做 Android：iOS 未配置证书/Match，默认跳过，避免每次 PR 白跑 macos-14。
+    # 恢复方式：仓库 Settings → Secrets and variables → Actions → Variables 新增 ENABLE_IOS=true。
+    if: vars.ENABLE_IOS == 'true'
+    needs: verify
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - name: Ensure native shells are committed
+        run: |
+          test -f ios/Runner.xcodeproj/project.pbxproj || { echo "::error::缺少 ios/ 原生壳，请先在本地执行 scripts/bootstrap.sh 并提交"; exit 1; }
+      - run: flutter pub get
+      # PR 阶段不签名，仅验证 iOS 侧编译与 CocoaPods 集成
+      - name: Build iOS without codesign
+        run: flutter build ios --release --no-codesign

@@ -1,0 +1,9 @@
+# 所有敏感值来自环境变量 / CI Secrets，禁止在此写入明文。
+app_identifier(ENV.fetch("IOS_BUNDLE_ID", "com.appforge.demo"))
+package_name(ENV.fetch("ANDROID_PACKAGE", "com.appforge.demo"))
+
+apple_id(ENV["FASTLANE_APPLE_ID"]) if ENV["FASTLANE_APPLE_ID"]
+team_id(ENV["APPLE_TEAM_ID"]) if ENV["APPLE_TEAM_ID"]
+itc_team_id(ENV["ITC_TEAM_ID"]) if ENV["ITC_TEAM_ID"]
+
+json_key_file(ENV["PLAY_SERVICE_ACCOUNT_JSON_PATH"]) if ENV["PLAY_SERVICE_ACCOUNT_JSON_PATH"]

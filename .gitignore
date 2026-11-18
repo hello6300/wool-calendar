@@ -1,0 +1,52 @@
+# Flutter
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.build/
+*.iml
+.idea/
+build/
+
+# 本地临时产物：uiautomator dump、实测截图、临时脚本输出
+.tmp/
+
+# 打包产物（体积大，发版走 GitHub Release，不入库）
+dist/
+*.apk
+*.aab
+
+# Android 签名资产（绝不入库）
+*.jks
+*.keystore
+android/key.properties
+android/app/upload-keystore.jks
+android/local.properties
+android/.gradle/
+.gradle/
+
+# iOS / Xcode
+ios/.symlinks/
+ios/Pods/
+ios/Flutter/Generated.xcconfig
+ios/Flutter/ephemeral/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+
+# CI / fastlane
+fastlane/report.xml
+fastlane/README.md
+fastlane/screenshots/
+.env
+.env.*
+play-service-account.json
+*.p8
+*.mobileprovision
+*.cer
+*.p12
+
+# 编辑器 / 系统
+.vscode/
+.DS_Store
+Thumbs.db
+*.log

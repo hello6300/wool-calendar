@@ -1,0 +1,578 @@
+{
+  "@@locale": "en",
+  "appName": "Wool Calendar",
+  "welcome": "Welcome",
+  "home": "Home",
+  "login": "Log in",
+  "logout": "Log out",
+  "settings": "Settings",
+  "retry": "Retry",
+  "cancel": "Cancel",
+
+  "woolCalendarTitle": "Wool Calendar",
+  "today": "Today",
+  "previousMonth": "Previous month",
+  "nextMonth": "Next month",
+  "weekMon": "Mon",
+  "weekTue": "Tue",
+  "weekWed": "Wed",
+  "weekThu": "Thu",
+  "weekFri": "Fri",
+  "weekSat": "Sat",
+  "weekSun": "Sun",
+
+  "monthLabel": "{month}/{year}",
+  "@monthLabel": {
+    "placeholders": {
+      "year": {"type": "int"},
+      "month": {"type": "int"}
+    }
+  },
+  "dealCount": "{count} deals",
+  "@dealCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "totalReward": "Total ¥{amount}",
+  "@totalReward": {
+    "placeholders": {
+      "amount": {"type": "String"}
+    }
+  },
+
+  "addDeal": "Add deal",
+  "editDeal": "Edit deal",
+  "platform": "Platform",
+  "platformHint": "e.g. JD, Taobao, CMB",
+  "platformRequired": "Platform is required",
+  "dealTitle": "Title",
+  "dealTitleHint": "Brief description of the deal",
+  "dealTitleRequired": "Title is required",
+  "dealDetail": "Details",
+  "dealDetailHint": "Rules, thresholds, timing, coupon value...",
+  "dealUrl": "Link",
+  "dealUrlHint": "https://",
+  "notes": "Strategy notes",
+  "notesHint": "Steps, caveats, account requirements",
+  "amountLabel": "Expected reward",
+  "amountInvalid": "Enter a valid amount",
+  "dateLabel": "Date",
+  "statusLabel": "Status",
+  "statusPlanned": "Planned",
+  "statusDone": "Joined",
+  "statusReceived": "Received",
+  "statusExpired": "Expired",
+  "quickPlatforms": "Common platforms",
+  "quickPlatformValues": "JD,Taobao,Pinduoduo,Douyin,Kuaishou,Meituan,Alipay,Bank,Other",
+
+  "save": "Save",
+  "delete": "Delete",
+  "confirm": "OK",
+  "deleteConfirmTitle": "Delete this deal?",
+  "deleteConfirmBody": "This cannot be undone.",
+  "saved": "Saved",
+  "deleted": "Deleted",
+  "linkCopied": "Link copied",
+  "copyLink": "Copy link",
+  "emptyDay": "No deals on this day. Tap + to add one.",
+  "emptyDayDevice": "No deals on \"{name}\" for this day. Tap + to add one.",
+  "@emptyDayDevice": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+
+  "startTimeLabel": "Start time",
+  "endTimeLabel": "End time",
+  "timeNotSet": "Not set",
+  "clearTime": "Clear time",
+  "timeRangeLabel": "Active hours",
+  "timeOnlyStart": "From {time}",
+  "@timeOnlyStart": {
+    "placeholders": {
+      "time": {"type": "String"}
+    }
+  },
+  "timeOnlyEnd": "Until {time}",
+  "@timeOnlyEnd": {
+    "placeholders": {
+      "time": {"type": "String"}
+    }
+  },
+  "crossDayShort": "next day",
+  "crossDayHint": "End time is before start time, so it is treated as the next day (e.g. 20:00-01:00)",
+  "remindLabel": "Remind me",
+  "remindHint": "Show a notification when the deal starts / ends",
+  "remindNoTime": "No active hours set, so no reminder will fire",
+  "remindDoneHint": "Joined / received / expired deals are not reminded",
+
+  "notificationSettings": "Reminder settings",
+  "notificationHelp": "Set a start / end time and turn on Remind me to get a system notification. Tap a notification to jump back to that day.",
+  "notificationStatus": "Notification permission",
+  "exactAlarmStatus": "Exact alarms",
+  "timeZoneLabel": "Time zone",
+  "pendingReminders": "Scheduled",
+  "pendingRemindersValue": "{count} notifications",
+  "@pendingRemindersValue": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "statusOn": "On",
+  "statusOff": "Off",
+  "statusUnknown": "Unknown",
+  "lastReminderError": "Last reminder error",
+  "grantNotification": "Enable notifications",
+  "grantExactAlarm": "Open exact alarm settings",
+  "sendTestNotification": "Send a test notification",
+  "scheduleTestReminder": "Schedule a reminder 1 min out",
+  "resyncReminders": "Resync all reminders",
+  "remindersResynced": "Reminders resynced",
+
+  "reminderChannelName": "Deal reminders",
+  "reminderChannelDesc": "Alerts when a deal starts or ends",
+  "reminderStartTitle": "Deal started: {title}",
+  "@reminderStartTitle": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "reminderStartBody": "{platform} · {time}, tap to see the notes",
+  "@reminderStartBody": {
+    "placeholders": {
+      "platform": {"type": "String"},
+      "time": {"type": "String"}
+    }
+  },
+  "reminderEndTitle": "Deal ending: {title}",
+  "@reminderEndTitle": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "reminderEndBody": "{platform} · {time}, don't miss it",
+  "@reminderEndBody": {
+    "placeholders": {
+      "platform": {"type": "String"},
+      "time": {"type": "String"}
+    }
+  },
+  "testNotificationTitle": "Notifications are on",
+  "testNotificationBody": "Reminders will look like this. Tap one to open that day.",
+  "scheduledTestTitle": "Scheduled reminder works",
+  "scheduledTestBody": "This was scheduled 1 minute ago, so timed reminders are working",
+
+  "importFromCalendar": "Import from phone calendar",
+  "deviceCalendarTitle": "Phone calendar events",
+  "deviceCalendarHelp": "Pick a range first, then tap Extract to read your phone calendar; select events and add them to the deal calendar. Everything is manual and read-only; your system calendar is never modified.",
+  "calendarPermissionStatus": "Calendar access",
+  "calendarPermissionDenied": "Calendar access is not granted yet. Tap the button below to allow it.",
+  "calendarPermissionHint": "The permission dialog may mention both reading and writing calendars: that is how the read plugin checks access. This app only calls read APIs and never creates, edits or deletes events in your system calendar.",
+  "grantCalendarPermission": "Allow calendar access",
+  "importRangeLabel": "Extract range",
+  "importEventCount": "{count} events",
+  "@importEventCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "importAllDay": "All-day",
+  "importImported": "Imported",
+  "importSelectAll": "Select all",
+  "importClearSelection": "Clear selection",
+  "importSelected": "Import selected ({count})",
+  "@importSelected": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "importLoading": "Reading phone calendar…",
+  "importEmpty": "No phone calendar events in this range. Pick another range and extract again.",
+  "importEmptyNoCalendar": "There is no calendar account on this phone, so nothing can be read",
+  "importEmptyFiltered": "Your calendar has events, but the system API returns none of them",
+  "importEmptyNoEvents": "The calendar account exists, but not a single event can be read",
+  "importDiagTitle": "Diagnostics",
+  "importDiagPermission": "Calendar permission: {state}",
+  "importDiagPermissionOk": "granted",
+  "importDiagPermissionNo": "not granted",
+  "importDiagCounts": "{calendars} calendars · {instances} readable instances · {events} raw events",
+  "@importDiagCounts": {
+    "placeholders": {
+      "calendars": {"type": "int"},
+      "instances": {"type": "int"},
+      "events": {"type": "int"}
+    }
+  },
+  "importDiagDevice": "Device: {device} · Android {sdk}",
+  "@importDiagDevice": {
+    "placeholders": {
+      "device": {"type": "String"},
+      "sdk": {"type": "int"}
+    }
+  },
+  "importDiagCalendarList": "{count} calendars found: {names}",
+  "@importDiagCalendarList": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "names": {"type": "String"}
+    }
+  },
+  "importDiagNoCalendar": "There is no calendar account at all. Most often the calendar permission is being answered with empty data by the system's privacy protection, not that your calendar is empty.",
+  "importDiagFiltered": "The calendar does hold {events} raw events, but the instances API returned 0. That is a system-level limitation, not a wrong range.",
+  "@importDiagFiltered": {
+    "placeholders": {
+      "events": {"type": "int"}
+    }
+  },
+  "importDiagXiaomiHint": "Xiaomi / Redmi: Settings → Apps → Manage apps → Forge Wool → Permissions → Calendar, set it to \"Always allow\"; if \"Blank pass\" is enabled, turn it off. Then come back and tap Retry.",
+  "importDiagError": "Read error: {error}",
+  "importDiagRecurring": "{count} of them carry a recurrence rule (daily/weekly repeats)",
+  "@importDiagRecurring": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "importDiagTableTotal": "{count} events in total on this phone (all dates)",
+  "@importDiagTableTotal": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "importDiagNoEvents": "This phone's calendar holds no events at all: either the permission is being answered with empty data, or the calendar has not synced to this phone yet.",
+  "importDiagRangeEmpty": "This phone's calendar holds {count} events, but none of them fall inside the selected range — try another range, nothing is broken.",
+  "@importDiagRangeEmpty": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "importDiagRecurringNoHit": "{count} recurring events overlap the range, but expanding their recurrence rules yields no occurrence inside it.",
+  "@importDiagRecurringNoHit": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "importDiagPerCalendar": "By calendar: {detail}",
+  "@importDiagPerCalendar": {
+    "placeholders": {
+      "detail": {"type": "String"}
+    }
+  },
+  "importDiagPerCalendarEmpty": "none",
+  "importDiagPerCalendarItem": "{name} {count}",
+  "@importDiagPerCalendarItem": {
+    "placeholders": {
+      "name": {"type": "String"},
+      "count": {"type": "int"}
+    }
+  },
+  "importDiagCopy": "Copy diagnostics",
+  "importDiagCopied": "Diagnostics copied — you can send it to the developer",
+  "@importDiagError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "importLoadFailed": "Could not read calendar: {error}",
+  "@importLoadFailed": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "importSuccess": "Imported {count} events; reminders follow their start / end times",
+  "@importSuccess": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "importAllImported": "All of these events were already imported",
+  "importViewCalendar": "View calendar",
+  "importRetry": "Retry extract",
+  "importFallbackPlatform": "Phone calendar",
+  "importUntitled": "(Untitled event)",
+  "importEndsAt": "Ends: {time}",
+  "@importEndsAt": {
+    "placeholders": {
+      "time": {"type": "String"}
+    }
+  },
+  "importLocation": "Location: {place}",
+  "@importLocation": {
+    "placeholders": {
+      "place": {"type": "String"}
+    }
+  },
+  "importSource": "Source: {calendar}",
+  "@importSource": {
+    "placeholders": {
+      "calendar": {"type": "String"}
+    }
+  },
+  "importedFromDevice": "From phone calendar · {calendar}",
+  "@importedFromDevice": {
+    "placeholders": {
+      "calendar": {"type": "String"}
+    }
+  },
+
+  "importPresetToday": "Today",
+  "importPresetNext7": "Next 7 days",
+  "importPresetThisMonth": "This month",
+  "importPresetNext30": "Next 30 days",
+  "importPresetCustom": "Custom",
+  "importStartDate": "Start date",
+  "importEndDate": "End date",
+  "importRangeDays": "{count} days",
+  "@importRangeDays": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "importRangeMaxHint": "Up to 366 days at a time; longer ranges are shortened automatically",
+  "importExtractAction": "Extract events",
+  "importReExtract": "Extract again",
+  "importNotExtracted": "Pick a range, then tap Extract events to read your phone calendar",
+  "importRangeChanged": "Range changed. Tap Extract events again",
+  "importExtractedRange": "Extracted: {range}",
+  "@importExtractedRange": {
+    "placeholders": {
+      "range": {"type": "String"}
+    }
+  },
+  "importPermissionReady": "Calendar access granted. Tap Extract events to start",
+
+  "deviceLabel": "Device",
+  "defaultDeviceName": "Phone",
+  "allDevices": "All devices",
+  "manageDevices": "Manage devices",
+  "deviceHelp": "Devices are local labels: the same deal can often be claimed once on each phone, tablet or spare handset, so keeping them separate avoids mix-ups. This app never reads another device's calendar. \"This phone\" is detected automatically (named after the model), so opening the app on another handset shows that handset instead. Deleting a device keeps its deals and moves them to this phone.",
+  "deviceFilterTooltip": "Filter by device",
+  "deviceAssign": "Assign to",
+  "addDevice": "Add device",
+  "newDeviceTitle": "Add device",
+  "renameDeviceTitle": "Rename device",
+  "deviceNameLabel": "Device name",
+  "deviceNameHint": "e.g. Tablet, Spare phone, Work phone",
+  "deviceNameRequired": "Enter a device name",
+  "deviceNameDuplicate": "A device with this name already exists",
+  "renameDevice": "Rename",
+  "deleteDevice": "Delete device",
+  "deviceDefaultBadge": "Default",
+  "deviceThisDeviceBadge": "This phone",
+  "deviceIdentityDetected": "Detected: {name}",
+  "@deviceIdentityDetected": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "deviceIdentityUnknown": "Could not detect this phone's model; deals will still go to the \"Phone\" device.",
+  "deviceDealCount": "{count} deals",
+  "@deviceDealCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "deviceDeleteTitle": "Delete \"{name}\"?",
+  "@deviceDeleteTitle": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "deviceDeleteBody": "The {count} deals on this device will move to \"{defaultName}\". No deals are lost.",
+  "@deviceDeleteBody": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "defaultName": {"type": "String"}
+    }
+  },
+  "deviceCantDeleteDefault": "The device for this phone cannot be deleted",
+  "deviceRemoved": "Device removed; {count} deals moved to this phone",
+  "@deviceRemoved": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+
+  "platformsTitle": "Common platforms",
+  "managePlatforms": "Manage",
+  "addPlatform": "Add platform",
+  "newPlatformTitle": "Add common platform",
+  "renamePlatformTitle": "Rename platform",
+  "platformNameLabel": "Platform name",
+  "platformNameHint": "e.g. Hema, Sam's Club",
+  "platformNameRequired": "Enter a platform name",
+  "platformNameDuplicate": "This platform already exists",
+  "renamePlatform": "Rename",
+  "deletePlatform": "Delete platform",
+  "platformDeleteBody": "After deleting, \"{name}\" will no longer appear in common platforms. Existing deals are not changed.",
+  "@platformDeleteBody": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "platformEmptyHint": "No common platforms yet. Add one and it becomes a one-tap chip when recording a deal.",
+
+  "syncSettings": "Data sync",
+  "syncHelpTitle": "WebDAV sync",
+  "syncHelp": "Enter the WebDAV root URL and a remote file path; folders are created automatically. Sync is a two-way merge: the newer copy wins by record id and last-modified time, and deletions propagate too. The password is stored only in encrypted system storage.",
+  "syncServerUrl": "Server URL",
+  "syncHelpEndpoints": "Common URLs: Jianguoyun https://dav.jianguoyun.com/dav/ | Nextcloud https://host/remote.php/dav/files/username/ | Synology http://lan-ip:5005/",
+  "syncHelpMkdir": "Not sure which folder to use? Tap the browse button on the right of the remote path field to walk the real folders in your account and pick one. Some NAS systems (fnOS, for example) refuse to let the App create folders and answer 405: create the target folder in their file manager and grant your account read/write, then pick it here.",
+  "syncServerHint": "https://dav.example.com/dav/",
+  "syncServerRequired": "Enter the server URL",
+  "syncServerInvalid": "URL must start with http:// or https://",
+  "syncUsername": "Username",
+  "syncPassword": "Password / app password",
+  "syncPasswordNote": "Stored in encrypted system storage, never in plain app data",
+  "syncShowPassword": "Show password",
+  "syncHidePassword": "Hide password",
+  "syncRemotePath": "Remote file path",
+  "syncRemotePathNote": "Relative to the URL above, e.g. appforge/wool-sync.json",
+  "syncRemotePathRequired": "Enter the remote file path",
+  "syncBrowse": "Browse remote folders",
+  "syncBrowseTitle": "Pick a remote folder",
+  "syncBrowseRoot": "Root",
+  "syncBrowseEmpty": "No subfolders here",
+  "syncBrowseUse": "Use this folder",
+  "syncBrowseRetry": "Retry",
+  "syncAuto": "Sync on launch",
+  "syncAutoHint": "Pull and merge when the app opens; failures stay silent",
+  "syncDailyBackup": "Back up the cloud file before the first sync of the day",
+  "syncDailyBackupHint": "Saved next to it as wool-sync-YYYY-MM-DD.json; no new folder is created (some NAS servers forbid it). Syncing overwrites the cloud copy, so this is your way back to yesterday.",
+  "syncBackupDone": "Backed up today: {file}",
+  "@syncBackupDone": {
+    "placeholders": {
+      "file": {"type": "String"}
+    }
+  },
+  "syncBackupDoneToday": "Backed up today",
+  "syncRestore": "Restore backup",
+  "syncRestoreTitle": "Pick a backup to restore",
+  "syncRestoreEmpty": "No backups in this folder yet. Turn on \"Back up before the first sync each day\" and sync once to create one.",
+  "syncRestoreDaily": "Daily backup",
+  "syncRestoreSafety": "Pre-restore snapshot {time}",
+  "@syncRestoreSafety": {
+    "placeholders": {
+      "time": {"type": "String"}
+    }
+  },
+  "syncRestoreConfirmTitle": "Overwrite this device with this backup?",
+  "syncRestoreConfirmDay": "Backup date: {day}",
+  "@syncRestoreConfirmDay": {
+    "placeholders": {
+      "day": {"type": "String"}
+    }
+  },
+  "syncRestoreConfirmCounts": "{backup} deals in the backup · {local} on this device now",
+  "@syncRestoreConfirmCounts": {
+    "placeholders": {
+      "backup": {"type": "String"},
+      "local": {"type": "String"}
+    }
+  },
+  "syncRestoreConfirmWarn": "Restoring replaces your local deals with this backup and writes it to the cloud. The current cloud file is saved as {file} first.",
+  "@syncRestoreConfirmWarn": {
+    "placeholders": {
+      "file": {"type": "String"}
+    }
+  },
+  "syncRestoreConfirmOk": "Restore",
+  "syncRestoreDone": "Restored {deals} deals",
+  "@syncRestoreDone": {
+    "placeholders": {
+      "deals": {"type": "String"}
+    }
+  },
+  "syncRestoreSafetySaved": "The pre-restore cloud data was saved as {file}",
+  "@syncRestoreSafetySaved": {
+    "placeholders": {
+      "file": {"type": "String"}
+    }
+  },
+  "syncRestoreOtherDevice": "Note: if another device syncs afterwards, its newer deals may be merged back in.",
+  "syncRestoreAborted": "Restore failed; local data was left untouched",
+  "syncTest": "Test connection",
+  "syncTestOk": "Connected",
+  "syncNow": "Sync now",
+  "syncRunning": "Syncing…",
+  "syncSave": "Save settings",
+  "syncSaved": "Settings saved",
+  "syncClear": "Disconnect",
+  "syncClearBody": "Only the server URL, account and password are cleared. Your local deals stay.",
+  "syncNever": "Not synced yet",
+  "syncLastAt": "Last synced: {time}",
+  "@syncLastAt": {
+    "placeholders": {
+      "time": {"type": "String"}
+    }
+  },
+  "syncDone": "Sync complete",
+  "syncResult": "Sync complete: {added} pulled · {pushed} uploaded · {updated} updated · {deleted} deleted",
+  "@syncResult": {
+    "placeholders": {
+      "added": {"type": "int"},
+      "pushed": {"type": "int"},
+      "updated": {"type": "int"},
+      "deleted": {"type": "int"}
+    }
+  },
+  "syncInspect": "View cloud data",
+  "syncInspectTitle": "This file in the cloud",
+  "syncInspectMissing": "No file in the cloud yet: the next sync will create it and upload your local deals.",
+  "syncInspectCounts": "{deals} deals · {devices} devices · {platforms} platforms",
+  "@syncInspectCounts": {
+    "placeholders": {
+      "deals": {"type": "String"},
+      "devices": {"type": "String"},
+      "platforms": {"type": "String"}
+    }
+  },
+  "syncInspectGenerated": "File generated: {time}",
+  "@syncInspectGenerated": {
+    "placeholders": {
+      "time": {"type": "String"}
+    }
+  },
+  "syncInspectSize": "File size: {size}",
+  "@syncInspectSize": {
+    "placeholders": {
+      "size": {"type": "String"}
+    }
+  },
+  "syncInspectLocal": "On this device: {deals} deals",
+  "@syncInspectLocal": {
+    "placeholders": {
+      "deals": {"type": "String"}
+    }
+  },
+  "syncInspectSample": "Titles: {titles}",
+  "@syncInspectSample": {
+    "placeholders": {
+      "titles": {"type": "String"}
+    }
+  },
+  "syncInspectMore": "and {count} more",
+  "@syncInspectMore": {
+    "placeholders": {
+      "count": {"type": "String"}
+    }
+  },
+  "syncInspectClose": "Got it",
+  "syncErrorBadConfig": "Enter the server URL and remote path first",
+  "syncErrorAuth": "Wrong username or password (401)",
+  "syncErrorForbidden": "This account cannot write to that folder (403)",
+  "syncErrorNotFound": "Remote URL or folder not found (404)",
+  "syncErrorNotWebDav": "This URL rejects WebDAV requests (405). It is probably a web page URL, or the /dav part is missing",
+  "syncErrorMkdirUnsupported": "The remote folder does not exist and this server forbids the App from creating it (fnOS works this way): create the folder in the cloud drive first, then sync again",
+  "syncErrorPathIsFolder": "The remote path points to a folder: append a file name, for example yangmao/wool-sync.json",
+  "syncErrorUnrecognized": "The remote file is not an AppForge sync file, so nothing was overwritten",
+  "syncErrorBackupFailed": "Today's cloud backup could not be written, so the sync was stopped instead of overwriting the cloud copy (you can turn off the daily backup below)",
+  "syncErrorNetwork": "Cannot reach the server; check network and URL",
+  "syncErrorTimeout": "Connection timed out, try again later",
+  "syncErrorServer": "Server returned error {code}",
+  "@syncErrorServer": {
+    "placeholders": {
+      "code": {"type": "int"}
+    }
+  }
+}

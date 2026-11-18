@@ -1,0 +1,117 @@
+name: mobile-release
+
+# 唯一会向商店上传产物的工作流。打 tag 或手动触发，默认只进「测试轨道」，
+# 生产发布由人工在商店后台 / fastlane release lane 显式推进。
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      play_track:
+        description: 'Google Play 轨道'
+        required: true
+        default: internal
+        type: choice
+        options: [internal, alpha, beta, production]
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  FLUTTER_VERSION: '3.24.5'
+
+jobs:
+  android:
+    name: Play Store (AAB)
+    # 当前阶段「只做本地开发、暂不发布」：默认跳过，误打 tag 也不会上传到 Play。
+    # 恢复方式：仓库 Settings → Secrets and variables → Actions → Variables 新增 ENABLE_RELEASE=true
+    #（同时需按 docs/ANDROID_SIGNING_SETUP.md 配齐 5 个 Secrets）。
+    if: vars.ENABLE_RELEASE == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+      - run: flutter pub get
+      - name: Decode signing assets from Secrets
+        env:
+          ANDROID_KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_B64 }}
+          ANDROID_KEYSTORE_PASS: ${{ secrets.ANDROID_KEYSTORE_PASS }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASS: ${{ secrets.ANDROID_KEY_PASS }}
+          PLAY_SERVICE_ACCOUNT_JSON_B64: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON_B64 }}
+        run: |
+          test -n "$ANDROID_KEYSTORE_B64" || { echo "::error::缺少 ANDROID_KEYSTORE_B64"; exit 1; }
+          test -n "$PLAY_SERVICE_ACCOUNT_JSON_B64" || { echo "::error::缺少 PLAY_SERVICE_ACCOUNT_JSON_B64"; exit 1; }
+          echo "$ANDROID_KEYSTORE_B64" | base64 -d > android/app/upload-keystore.jks
+          cat > android/key.properties <<PROPS
+          storePassword=$ANDROID_KEYSTORE_PASS
+          keyPassword=$ANDROID_KEY_PASS
+          keyAlias=$ANDROID_KEY_ALIAS
+          storeFile=upload-keystore.jks
+          PROPS
+          echo "$PLAY_SERVICE_ACCOUNT_JSON_B64" | base64 -d > "$RUNNER_TEMP/play-key.json"
+      - name: fastlane android beta
+        env:
+          BUILD_NUMBER: ${{ github.run_number }}
+          PLAY_TRACK: ${{ inputs.play_track || 'internal' }}
+          ANDROID_PACKAGE: com.appforge.demo
+          PLAY_SERVICE_ACCOUNT_JSON_PATH: ${{ runner.temp }}/play-key.json
+        run: bundle exec fastlane android beta
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-aab-${{ github.ref_name }}
+          path: build/app/outputs/bundle/release/app-release.aab
+          retention-days: 90
+
+  ios:
+    name: TestFlight (IPA)
+    # 双重开关：先要处于发布模式，且显式恢复 iOS。当前阶段两者皆关，默认跳过。
+    # 若只开 ENABLE_IOS 而不开 ENABLE_RELEASE，本 job 仍不会上传 TestFlight。
+    if: vars.ENABLE_RELEASE == 'true' && vars.ENABLE_IOS == 'true'
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+      - name: Ensure native shell is committed
+        run: |
+          test -f ios/Runner.xcodeproj/project.pbxproj || { echo "::error::缺少 ios/ 原生壳，请先执行 scripts/bootstrap.sh 并提交"; exit 1; }
+      - run: flutter pub get
+      - name: fastlane ios beta
+        env:
+          BUILD_NUMBER: ${{ github.run_number }}
+          IOS_BUNDLE_ID: com.appforge.demo
+          IOS_PROFILE_NAME: ${{ secrets.IOS_PROFILE_NAME }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+        run: bundle exec fastlane ios beta
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-ipa-${{ github.ref_name }}
+          path: build/ios/ipa/Runner.ipa
+          retention-days: 90

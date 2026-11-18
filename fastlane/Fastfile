@@ -1,0 +1,127 @@
+fastlane_version "2.219.0"
+
+# Flutter 双端分发链：构建命令走 flutter CLI，签名/上传走 fastlane。
+# 所有密钥均来自环境变量或 CI Secret，本文件不含任何明文敏感值。
+
+PACKAGE_NAME = ENV.fetch("ANDROID_PACKAGE", "com.appforge.demo")
+BUNDLE_ID    = ENV.fetch("IOS_BUNDLE_ID", "com.appforge.demo")
+AAB_PATH     = "build/app/outputs/bundle/release/app-release.aab"
+IPA_PATH     = "build/ios/ipa/Runner.ipa"
+
+platform :android do
+  desc "运行 Flutter 单元测试"
+  lane :test do
+    sh("flutter", "test")
+  end
+
+  desc "构建 AAB 并上传 Play 内部测试轨道"
+  lane :beta do
+    sh("flutter", "build", "appbundle", "--release",
+       "--build-number", ENV.fetch("BUILD_NUMBER", "1"))
+    upload_to_play_store(
+      package_name: PACKAGE_NAME,
+      track: ENV.fetch("PLAY_TRACK", "internal"),
+      aab: AAB_PATH,
+      json_key: ENV["PLAY_SERVICE_ACCOUNT_JSON_PATH"],
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
+
+  desc "提升/发布到生产轨道（需先在 Play 后台建好版本）"
+  lane :release do
+    sh("flutter", "build", "appbundle", "--release",
+       "--build-number", ENV.fetch("BUILD_NUMBER", "1"))
+    upload_to_play_store(
+      package_name: PACKAGE_NAME,
+      track: "production",
+      aab: AAB_PATH,
+      json_key: ENV["PLAY_SERVICE_ACCOUNT_JSON_PATH"],
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
+end
+
+platform :ios do
+  desc "运行 Flutter 单元测试"
+  lane :test do
+    sh("flutter", "test")
+  end
+
+  desc "Match 签名 -> 归档 -> TestFlight"
+  lane :beta do
+    api_key = app_store_connect_api_key(
+      key_id: ENV["ASC_KEY_ID"],
+      issuer_id: ENV["ASC_ISSUER_ID"],
+      key_content: ENV["ASC_PRIVATE_KEY"],
+      in_house: false
+    )
+
+    # 证书/描述文件由独立私有 Git 仓库统一管理（readonly 保证 CI 不改动证书仓库）
+    match(
+      type: "appstore",
+      readonly: true,
+      git_url: ENV["MATCH_GIT_URL"],
+      app_identifier: [BUNDLE_ID]
+    )
+
+    # Runner target 默认是 Automatic signing；Match 场景下必须切 Manual 并指定 profile
+    update_code_signing_settings(
+      use_automatic_signing: false,
+      path: "ios/Runner.xcodeproj",
+      team_id: ENV["APPLE_TEAM_ID"],
+      bundle_identifier: BUNDLE_ID,
+      code_sign_identity: "iPhone Distribution",
+      profile_name: ENV["IOS_PROFILE_NAME"]
+    )
+
+    # 先让 Flutter 完成 pod install 与 Runner.app 编译，再由 gym 归档并签名导出
+    sh("flutter", "pub", "get")
+    sh("flutter", "build", "ios", "--release", "--no-codesign",
+       "--build-number", ENV.fetch("BUILD_NUMBER", "1"))
+
+    build_app(
+      workspace: "ios/Runner.xcworkspace",
+      scheme: "Runner",
+      export_method: "app-store",
+      output_directory: "build/ios/ipa",
+      output_name: "Runner.ipa",
+      export_options: {
+        provisioningProfiles: {
+          BUNDLE_ID => ENV["IOS_PROFILE_NAME"]
+        }
+      }
+    )
+
+    upload_to_testflight(
+      api_key: api_key,
+      ipa: IPA_PATH,
+      skip_waiting_for_build_processing: true
+    )
+  end
+
+  desc "上传商店素材并提交审核（元数据见 docs/store-listing/app-store）"
+  lane :release do
+    api_key = app_store_connect_api_key(
+      key_id: ENV["ASC_KEY_ID"],
+      issuer_id: ENV["ASC_ISSUER_ID"],
+      key_content: ENV["ASC_PRIVATE_KEY"]
+    )
+    deliver(
+      api_key: api_key,
+      ipa: IPA_PATH,
+      submit_for_review: true,
+      force: true,
+      skip_screenshots: true,
+      skip_metadata: false
+    )
+  end
+
+  desc "提审被拒后的回滚：暂停当前版本分发"
+  lane :rollback do
+    UI.message("请在 App Store Connect 手动移除待审构建，并回退到上一已过审版本；不要直接删除线上版本。")
+  end
+end

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 桌面图标下的名字。默认（中文环境）用中文名，见 values-en 的英文名。 -->
+    <string name="app_name">羊毛日历</string>
+</resources>
