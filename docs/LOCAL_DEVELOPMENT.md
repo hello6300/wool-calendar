@@ -187,6 +187,46 @@ powershell -ExecutionPolicy Bypass -File scripts\run-mumu.ps1
 新建记录 → 活动日期今天、**开始时间设成 2 分钟后**、到点提醒打开 → 保存；
 铃铛页「待发提醒」应 ≥1，到点下拉通知栏应看到「羊毛开始：xxx」，点它回到当天日历。
 
+### ⚠ release 包定时提醒全部失效：R8 裁掉了 Gson 的泛型签名（2026-11-18 修）
+
+**现象**：debug 包一切正常；装 release 包后「发一条测试通知」能弹，但**到点提醒一条都不响**，
+铃铛页「待发提醒」始终 0，界面下方法显示
+
+```
+上次错误: sync: PlatformException(error, TypeToken must be created with a type argument:
+new TypeToken<...>() {}; When using code shrinkers (ProGuard, R8, ...) make sure that
+generic signatures are preserved.)
+```
+
+**根因**：`flutter_local_notifications` 把「已排程通知」用 Gson 序列化后写 prefs，
+拿类型靠 `new TypeToken<List<ScheduledNotification>>() {}` 这个匿名子类。R8 在 release 下
+把泛型签名（`Signature` 属性）当无用元数据剥掉，`TypeToken` 构造直接抛
+`IllegalStateException`，`zonedSchedule()` 每次都失败。`show()`（立即通知）不走这条路径，
+所以**「测试通知能弹」会把人彻底带偏**。
+
+**修法**：`android/app/proguard-rules.pro` 保留签名与被反射的类，`build.gradle` 的
+release 里 `proguardFiles 'proguard-rules.pro'`：
+
+```proguard
+-keepattributes Signature
+-keepattributes *Annotation*
+-keepattributes InnerClasses,EnclosingMethod
+-keep class com.dexterous.** { *; }
+-keep class com.google.gson.** { *; }
+-keep class * extends com.google.gson.TypeAdapter
+```
+
+**自查命令**（release 装机后）：
+
+```powershell
+adb -s <设备> logcat -d | Select-String "local_notifications|\[reminder\]"
+# 修复前：zonedSchedule 抛 TypeToken 异常、pendingCount 恒为 0
+# 修复后：无异常，铃铛页「待发提醒」≥1
+```
+
+**教训**：只要引入「靠反射 / 泛型序列化的插件」，release 包必须单独验一遍，
+debug 通过不等于 release 通过。这个 bug 从 11-13 加功能起一直潜伏，直到 11-18 才被发现。
+
 ---
 
 ## 2.6 从手机日历提取活动（2026-11-14 新增）
@@ -657,17 +697,26 @@ WebDAV 客户端用 dio 的 `HttpClientAdapter` 假服务器验证 `MKCOL` / `PU
 - **按本地日历日判断**（`WoolSyncService.needsDailyBackup`），不是按 24 小时；
   同一天第二次同步不再备份。状态记在 `appforge.sync.last_backup_at`，
   备份文件名记在 `appforge.sync.last_backup_path`。
-- **备份失败 = 中止本次同步**（`SyncFailure.backupFailed`），宁可不改云端，
+- 备份失败 = 中止本次同步**（`SyncFailure.backupFailed`），宁可不改云端，
   也不能让用户失去「回到昨天」的机会。同步页可以关掉这个开关。
 - 状态卡常驻显示「今日已备份：<文件>」；同一天后续同步不再写文件，但这行仍然在
   （只记了时间、没记文件名的旧数据会退化显示为「今日已备份」）。
-- 备份会一直累积（一天一个文件，一年 365 个）。**故意不做自动清理**：
-  删用户的数据要他自己决定，需要清理时去网盘里删即可。
+- **保留最近 N 份（2026-11-18 加，可配置）**：一年 365 个文件在网盘里翻不动，
+  改成默认留最近 **7 份**（= 一周后悔药），更旧的同步后自动 DELETE 掉。
+  实现在 `WoolSyncService.pruneBackups()`，配置项 `SyncSettings.backupKeep`
+  （prefs `appforge.sync.backup_keep`，可选 3 / 7 / 14 / 30 / 0=不限）。
+  四条约束，每条都有原因：
+  1. **每日备份与恢复前快照合起来算一份池子**，不分开计，否则云端文件数会比用户设的更多；
+  2. **只在「每日备份」开关打开时清理**，关掉备份还去删文件会让人以为 App 在乱动云端；
+  3. **清理失败不让同步变红**：DELETE 是可选动词（飞牛等可能 405），一条失败就停，
+     同步结果照旧算成功，只是不报「已清理 N 份」；
+  4. **主文件永不参与**：`pruneBackups` 只吃 `listBackups()` 的结果，
+     `parseBackupName` 本来就把 `wool-sync.json` 自己排除在外。
 
 验证：`WoolSyncService.dailyBackupPath / needsDailyBackup` 纯函数单测 5 条 +
-控制器集成测试 4 条（同步前备份 / 同日不重复 / 备份失败中止 / 关掉开关不备份），
-共 **82/82**。真机实测：首次同步后网盘里出现 `wool-sync-2026-11-16.json`，
-同日再同步不重复生成，重启 App 后提示仍在。
+控制器集成测试 4 条（同步前备份 / 同日不重复 / 备份失败中止 / 关掉开关不备份）+
+保留份数 4 条（保留 3 份只删更旧 / 不限时不发 DELETE / DELETE 被拒仍算同步成功 /
+设置页能选「不限」且关掉备份后选项消失）。
 
 ### 2.9.3 备份恢复：从某天的备份回到那天（2026-11-16 加）
 

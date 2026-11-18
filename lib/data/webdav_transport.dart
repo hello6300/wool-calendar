@@ -93,6 +93,12 @@ abstract class SyncTransport {
   /// 上传整份快照，通常覆盖同名文件。
   Future<void> upload(String remotePath, String content);
 
+  /// 删除远端文件（用于清理超出保留份数的旧备份）。
+  ///
+  /// 幂等：文件已经不在了（404）视为成功 —— 清理是顺带做的事，
+  /// 不该因为「上一次删了一半」而每次都报错。
+  Future<void> delete(String remotePath);
+
   /// 逐级创建远端目录（已存在则忽略）。
   Future<void> ensureDirectory(String remotePath);
 }
@@ -506,6 +512,21 @@ class WebDavTransport implements SyncTransport {
         body: response.data,
       );
     }
+  }
+
+  @override
+  Future<void> delete(String remotePath) async {
+    final response = await _request('DELETE', remotePath);
+    final status = response.statusCode ?? 0;
+    if (status >= 200 && status < 300) return;
+    // 已经不在了就是「删过了」：清理旧备份是顺带动作，不该因此报错。
+    if (status == 404) return;
+    throw await _failureFor(
+      status,
+      method: 'DELETE',
+      url: _url(remotePath),
+      body: response.data,
+    );
   }
 
   @override

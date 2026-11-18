@@ -33,6 +33,7 @@ class _SyncSettingsPageState extends State<SyncSettingsPage> {
 
   bool _autoSync = false;
   bool _dailyBackup = true;
+  int _backupKeep = SyncSettings.defaultBackupKeep;
   bool _obscure = true;
   bool _initialized = false;
 
@@ -57,7 +58,16 @@ class _SyncSettingsPageState extends State<SyncSettingsPage> {
     _remotePath.text = settings.remotePath;
     _autoSync = settings.autoSync;
     _dailyBackup = settings.dailyBackup;
+    _backupKeep = _normalizeKeep(settings.backupKeep);
   }
+
+  /// 老版本 / 手工改过的 prefs 里可能是 5、10 这种不在选项里的值。
+  /// DropdownButtonFormField 遇到 value 不在 items 里会直接断言崩溃，
+  /// 所以进表单前先收进已知选项。
+  static int _normalizeKeep(int value) =>
+      SyncSettings.backupKeepChoices.contains(value)
+          ? value
+          : SyncSettings.defaultBackupKeep;
 
   @override
   void dispose() {
@@ -102,6 +112,7 @@ class _SyncSettingsPageState extends State<SyncSettingsPage> {
         remotePath: path.isEmpty ? SyncSettings.defaultRemotePath : path,
         autoSync: _autoSync,
         dailyBackup: _dailyBackup,
+        backupKeep: _backupKeep,
       ),
     );
     return true;
@@ -470,6 +481,7 @@ class _SyncSettingsPageState extends State<SyncSettingsPage> {
     setState(() {
       _autoSync = false;
       _dailyBackup = true;
+      _backupKeep = SyncSettings.defaultBackupKeep;
     });
   }
 
@@ -587,6 +599,36 @@ class _SyncSettingsPageState extends State<SyncSettingsPage> {
               value: _dailyBackup,
               onChanged: (value) => setState(() => _dailyBackup = value),
             ),
+            // 「保留几份」只在开了每日备份时才有意义：关掉备份还留着这个下拉，
+            // 会让人以为 App 仍在动云端文件。
+            if (_dailyBackup) ...<Widget>[
+              const SizedBox(height: 4),
+              DropdownButtonFormField<int>(
+                key: const Key('syncBackupKeepField'),
+                value: _backupKeep,
+                isExpanded: true,
+                decoration: InputDecoration(
+                  labelText: l10n.syncBackupKeep,
+                  helperText: l10n.syncBackupKeepHint,
+                  prefixIcon: const Icon(Icons.inventory_2_outlined),
+                  border: const OutlineInputBorder(),
+                ),
+                items: <DropdownMenuItem<int>>[
+                  for (final keep in SyncSettings.backupKeepChoices)
+                    DropdownMenuItem<int>(
+                      value: keep,
+                      child: Text(
+                        keep == SyncSettings.unlimitedBackupKeep
+                            ? l10n.syncBackupKeepUnlimited
+                            : l10n.syncBackupKeepValue(keep),
+                      ),
+                    ),
+                ],
+                onChanged: (value) {
+                  if (value != null) setState(() => _backupKeep = value);
+                },
+              ),
+            ],
             const SizedBox(height: 4),
             Row(
               children: <Widget>[
@@ -796,6 +838,14 @@ class _StatusCard extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               l10n.syncBackupDoneToday,
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ],
+          // 只在真的删了东西时才提一句：平时每次同步都报「已清理 0 份」是噪音。
+          if (!hasError && controller.prunedBackups > 0) ...<Widget>[
+            const SizedBox(height: 4),
+            Text(
+              l10n.syncBackupPruned(controller.prunedBackups),
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ],

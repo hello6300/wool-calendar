@@ -59,6 +59,11 @@ android {
         release {
             // 有 upload key → 用它签名（可上架）；没有 → 回退 debug（仅供本地验证，不可上传商店）。
             signingConfig = keystorePropertiesFile.exists() ? signingConfigs.release : signingConfigs.debug
+            // ★ release 默认开 R8。flutter_local_notifications 的已排程列表靠 Gson
+            // 序列化，泛型签名被裁掉后 zonedSchedule 会抛 TypeToken 异常，
+            // 结果是定时提醒全部失效（立即通知仍正常，所以很难发现）。
+            // 规则与成因写在 proguard-rules.pro 里，改之前先读那里的注释。
+            proguardFiles 'proguard-rules.pro'
         }
     }
 }

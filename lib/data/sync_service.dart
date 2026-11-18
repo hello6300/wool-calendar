@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
+
 import 'sync_snapshot.dart';
 import 'webdav_transport.dart';
 
@@ -206,6 +208,38 @@ class WoolSyncService {
     // 而 GET/PUT 是所有服务都有的。
     await transport.upload(path, raw);
     return path;
+  }
+
+  /// 删除超出保留份数的旧备份，返回实际删掉几个。
+  ///
+  /// 排序沿用 [listBackups] 的「新 → 旧」，[keep] 之后的全是更旧的。
+  /// **每日备份与恢复前快照一起算**：两者都是「某一时刻的云端快照」，
+  /// 分开计数只会让云端文件数比用户设的数字更多，反而更难解释。
+  ///
+  /// [keep] <= 0 表示不限：直接返回 0，连目录都不列，不发任何请求。
+  ///
+  /// 单条失败就地停止：最常见的原因是服务器不支持 DELETE（405）或只给只读
+  /// 权限（403），一条条硬试只会把一次同步拖成几十个失败请求。
+  Future<int> pruneBackups({
+    required String remotePath,
+    required int keep,
+  }) async {
+    if (keep <= 0) return 0;
+
+    final backups = await listBackups(remotePath: remotePath);
+    if (backups.length <= keep) return 0;
+
+    var removed = 0;
+    for (final backup in backups.skip(keep)) {
+      try {
+        await transport.delete(backup.path);
+        removed++;
+      } on SyncException catch (error) {
+        debugPrint('[sync] 清理旧备份失败 ${backup.name}: $error');
+        break;
+      }
+    }
+    return removed;
   }
 
   // ---------------------------------------------------------------------------

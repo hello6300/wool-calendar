@@ -2802,6 +2802,89 @@ void main() {
         isEmpty,
       );
     });
+
+    test('保留最近 3 份：同步后删掉更旧的备份，最近的 3 份留下', () async {
+      final (controller, transport) = await boot();
+      transport.stored = '{"app":"appforge-wool","deals":[]}';
+      transport.tree = <String, List<RemoteEntry>>{
+        'yangmao': <RemoteEntry>[
+          const RemoteEntry(name: 'wool-sync.json', isCollection: false),
+          const RemoteEntry(name: 'wool-sync-2026-11-10.json', isCollection: false),
+          const RemoteEntry(name: 'wool-sync-2026-11-11.json', isCollection: false),
+          const RemoteEntry(name: 'wool-sync-2026-11-12.json', isCollection: false),
+          const RemoteEntry(name: 'wool-sync-2026-11-13.json', isCollection: false),
+          const RemoteEntry(name: 'wool-sync-2026-11-14.json', isCollection: false),
+        ],
+      };
+      await controller.save(
+        controller.settings.copyWith(backupKeep: 3),
+      );
+
+      await controller.syncNow();
+
+      expect(controller.hasError, isFalse);
+      // 新的在前：14 / 13 / 12 留下，11 与 10 删掉。
+      expect(transport.deleted, <String>[
+        'yangmao/wool-sync-2026-11-11.json',
+        'yangmao/wool-sync-2026-11-10.json',
+      ]);
+      expect(controller.prunedBackups, 2);
+      expect(
+        transport.deleted,
+        isNot(contains('yangmao/wool-sync.json')),
+        reason: '主文件永远不能被清理逻辑碰到',
+      );
+    });
+
+    test('保留份数设为不限时不发任何 DELETE', () async {
+      final (controller, transport) = await boot();
+      transport.stored = '{"app":"appforge-wool","deals":[]}';
+      transport.tree = <String, List<RemoteEntry>>{
+        'yangmao': <RemoteEntry>[
+          for (var day = 1; day <= 10; day++)
+            RemoteEntry(
+              name: 'wool-sync-2026-11-${day.toString().padLeft(2, '0')}.json',
+              isCollection: false,
+            ),
+        ],
+      };
+      await controller.save(
+        controller.settings.copyWith(
+          backupKeep: SyncSettings.unlimitedBackupKeep,
+        ),
+      );
+
+      await controller.syncNow();
+
+      expect(controller.hasError, isFalse);
+      expect(transport.deleted, isEmpty);
+      expect(controller.prunedBackups, 0);
+    });
+
+    test('服务器不支持 DELETE 时同步仍然算成功，只是不报清理数', () async {
+      final (controller, transport) = await boot();
+      transport.stored = '{"app":"appforge-wool","deals":[]}';
+      transport.tree = <String, List<RemoteEntry>>{
+        'yangmao': <RemoteEntry>[
+          for (var day = 1; day <= 6; day++)
+            RemoteEntry(
+              name: 'wool-sync-2026-11-${day.toString().padLeft(2, '0')}.json',
+              isCollection: false,
+            ),
+        ],
+      };
+      transport.deleteError =
+          const SyncException(SyncFailure.notWebDav, statusCode: 405);
+      await controller.save(controller.settings.copyWith(backupKeep: 3));
+
+      await controller.syncNow();
+
+      // 删旧备份是顺带动作：服务器不回 405 也不该让一次成功的同步变红。
+      expect(controller.hasError, isFalse);
+      expect(controller.lastSyncAt, isNotNull);
+      expect(controller.prunedBackups, 0);
+      expect(transport.uploaded.containsKey('yangmao/wool-sync.json'), isTrue);
+    });
   });
 
   group('备份恢复', () {
@@ -3071,6 +3154,31 @@ void main() {
       expect(log.single.method, 'PUT');
       expect(log.single.headers['Authorization'], startsWith('Basic '));
       expect(log.single.data, '{"app":"appforge-wool"}');
+    });
+
+    test('delete 发 DELETE 动词；404 视为已删掉，405 报地址问题', () async {
+      final log = <RequestOptions>[];
+      final transport = build(log, (_) => 204);
+      await transport.delete('yangmao/wool-sync-2026-11-10.json');
+
+      expect(log.single.method, 'DELETE');
+      expect(
+        log.single.path,
+        contains('yangmao/wool-sync-2026-11-10.json'),
+      );
+      expect(log.single.headers['Authorization'], startsWith('Basic '));
+
+      // 文件已经不在了 = 清理目的已达成，不该让同步因此报错。
+      await build(<RequestOptions>[], (_) => 404)
+          .delete('yangmao/wool-sync-2026-11-10.json');
+
+      await expectLater(
+        build(<RequestOptions>[], (_) => 405).delete('a/b.json'),
+        throwsA(
+          isA<SyncException>()
+              .having((e) => e.failure, 'failure', SyncFailure.notWebDav),
+        ),
+      );
     });
 
     test('probe 用 PROPFIND + Depth:0，403 抛无权限', () async {
@@ -3470,6 +3578,67 @@ void main() {
     expect(tester.getRect(button).top, closeTo(top, 0.5));
   });
 
+  testWidgets('备份保留份数可以选「不限」并保存，关掉备份后选项消失', (tester) async {
+    tester.view.physicalSize = const Size(1000, 2200);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+
+    SharedPreferences.setMockInitialValues(<String, Object>{});
+    final prefs = await SharedPreferences.getInstance();
+    final store = WoolStore(WoolRepository(prefs));
+    final controller = SyncController(
+      store: store,
+      settingsStore: SyncSettingsStore(prefs, MemorySecretStore()),
+      transportFactory: (_) => _FakeSyncTransport(),
+    );
+    await controller.load();
+    await controller.save(
+      const SyncSettings(
+        baseUrl: 'https://dav.example.com/dav/',
+        username: 'me',
+        password: 'secret',
+        remotePath: 'yangmao/wool-sync.json',
+      ),
+    );
+
+    await tester.pumpWidget(
+      ChangeNotifierProvider<SyncController>.value(
+        value: controller,
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: SyncSettingsPage(),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // 默认是 7 份，不是「不限」：一年 365 个备份文件没人挑得动。
+    expect(find.text('7 backups'), findsOneWidget);
+
+    final field = find.byKey(const Key('syncBackupKeepField'));
+    await tester.ensureVisible(field);
+    await tester.pumpAndSettle();
+    await tester.tap(field);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Unlimited (never delete)').last);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const Key('syncSaveButton')));
+    await tester.pumpAndSettle();
+
+    expect(controller.settings.backupKeep, SyncSettings.unlimitedBackupKeep);
+    expect(controller.settings.keepsUnlimitedBackups, isTrue);
+
+    // 关掉每日备份后这个选项必须消失：不再写备份，就没有「保留几份」可言。
+    await tester.tap(find.byKey(const Key('syncBackupSwitch')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('syncBackupKeepField')), findsNothing);
+  });
+
   testWidgets('主界面下拉即同步，不必先进设置页', (tester) async {
     SharedPreferences.setMockInitialValues(<String, Object>{});
     final prefs = await SharedPreferences.getInstance();
@@ -3725,6 +3894,12 @@ class _FakeSyncTransport implements SyncTransport {
   /// 设了就让下一次 PUT 直接失败，用来验「备份失败要中止同步」。
   SyncException? uploadError;
 
+  /// DELETE 过的路径（备份保留份数测试用）。
+  final List<String> deleted = <String>[];
+
+  /// 设了就让 DELETE 直接失败，用来验「删不掉不该把同步判成失败」。
+  SyncException? deleteError;
+
   /// 「远端目录树」：path → 子项。浏览功能测试用。
   Map<String, List<RemoteEntry>> tree = const <String, List<RemoteEntry>>{};
   final List<String> listed = <String>[];
@@ -3760,6 +3935,17 @@ class _FakeSyncTransport implements SyncTransport {
     uploads++;
     uploaded[remotePath] = content;
     if (mainPath == null || mainPath == remotePath) stored = content;
+  }
+
+  @override
+  Future<void> delete(String remotePath) async {
+    final error = deleteError;
+    if (error != null) throw error;
+    deleted.add(remotePath);
+    files.remove(remotePath);
+    uploaded.remove(remotePath);
+    // 主文件不该被清理逻辑删掉；真删了说明逻辑有 bug，让后续断言直接失败。
+    if (mainPath != null && remotePath == mainPath) stored = null;
   }
 }
 

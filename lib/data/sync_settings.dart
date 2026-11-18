@@ -13,10 +13,23 @@ class SyncSettings {
     this.remotePath = defaultRemotePath,
     this.autoSync = false,
     this.dailyBackup = true,
+    this.backupKeep = defaultBackupKeep,
   });
 
   /// 坚果云 / Nextcloud / 群晖都支持这种相对路径，目录会自动逐级创建。
   static const String defaultRemotePath = 'appforge/wool-sync.json';
+
+  /// 默认只留最近 7 份备份。
+  ///
+  /// 每日备份一年就是 365 个文件，飞牛 / 坚果云这类网盘会把它们和主文件一起
+  /// 列出来，越长越难挑；而真正会用到的几乎都是最近几天。留 7 份 = 一周的后悔药。
+  static const int defaultBackupKeep = 7;
+
+  /// 保留份数的可选值。0 表示「不限」，单独用 [unlimitedBackupKeep] 判断。
+  static const List<int> backupKeepChoices = <int>[3, 7, 14, 30, unlimitedBackupKeep];
+
+  /// `backupKeep` 取这个值表示不清理。
+  static const int unlimitedBackupKeep = 0;
 
   /// WebDAV 根地址，例如 `https://dav.jianguoyun.com/dav/`。
   final String baseUrl;
@@ -33,8 +46,18 @@ class SyncSettings {
   /// 默认开：同步会用合并结果覆盖云端，没有备份就没有后悔药。
   final bool dailyBackup;
 
+  /// 备份最多留几份（每日备份 + 恢复前快照合计），最旧的先删。
+  /// [unlimitedBackupKeep] 表示不清理；<=0 一律按「不限」处理。
+  final int backupKeep;
+
   bool get isConfigured =>
       baseUrl.trim().isNotEmpty && remotePath.trim().isNotEmpty;
+
+  /// 实际要清理的份数：0 = 不限（不做任何 DELETE）。
+  int get effectiveBackupKeep =>
+      backupKeep <= 0 ? unlimitedBackupKeep : backupKeep;
+
+  bool get keepsUnlimitedBackups => effectiveBackupKeep == unlimitedBackupKeep;
 
   SyncSettings copyWith({
     String? baseUrl,
@@ -43,6 +66,7 @@ class SyncSettings {
     String? remotePath,
     bool? autoSync,
     bool? dailyBackup,
+    int? backupKeep,
   }) =>
       SyncSettings(
         baseUrl: baseUrl ?? this.baseUrl,
@@ -51,6 +75,7 @@ class SyncSettings {
         remotePath: remotePath ?? this.remotePath,
         autoSync: autoSync ?? this.autoSync,
         dailyBackup: dailyBackup ?? this.dailyBackup,
+        backupKeep: backupKeep ?? this.backupKeep,
       );
 }
 
@@ -109,6 +134,9 @@ class SyncSettingsStore {
   static const String dailyBackupKey = 'appforge.sync.backup_daily';
   static const String lastBackupKey = 'appforge.sync.last_backup_at';
   static const String lastBackupPathKey = 'appforge.sync.last_backup_path';
+
+  /// 备份保留份数；没存过按 [SyncSettings.defaultBackupKeep]。
+  static const String backupKeepKey = 'appforge.sync.backup_keep';
   static const String passwordSecretKey = 'appforge.sync.password';
 
   final SharedPreferences _prefs;
@@ -123,6 +151,9 @@ class SyncSettingsStore {
         autoSync: _prefs.getBool(autoSyncKey) ?? false,
         // 没存过就是默认开：备份属于兜底保护，不该靠用户自己去发现开关。
         dailyBackup: _prefs.getBool(dailyBackupKey) ?? true,
+        // 老版本没有这个键：按默认 7 份处理，等同于「一周后悔药」。
+        backupKeep:
+            _prefs.getInt(backupKeepKey) ?? SyncSettings.defaultBackupKeep,
       );
 
   Future<void> save(SyncSettings settings) async {
@@ -135,6 +166,7 @@ class SyncSettingsStore {
     );
     await _prefs.setBool(autoSyncKey, settings.autoSync);
     await _prefs.setBool(dailyBackupKey, settings.dailyBackup);
+    await _prefs.setInt(backupKeepKey, settings.backupKeep);
 
     if (settings.password.isEmpty) {
       await _secrets.delete(passwordSecretKey);
@@ -178,6 +210,7 @@ class SyncSettingsStore {
     await _prefs.remove(dailyBackupKey);
     await _prefs.remove(lastBackupKey);
     await _prefs.remove(lastBackupPathKey);
+    await _prefs.remove(backupKeepKey);
     await _secrets.delete(passwordSecretKey);
   }
 }

@@ -439,6 +439,21 @@
   "syncAutoHint": "Pull and merge when the app opens; failures stay silent",
   "syncDailyBackup": "Back up the cloud file before the first sync of the day",
   "syncDailyBackupHint": "Saved next to it as wool-sync-YYYY-MM-DD.json; no new folder is created (some NAS servers forbid it). Syncing overwrites the cloud copy, so this is your way back to yesterday.",
+  "syncBackupKeep": "Keep the latest backups",
+  "syncBackupKeepHint": "Daily backups and pre-restore snapshots count together; older files are deleted from the cloud",
+  "syncBackupKeepValue": "{count} backups",
+  "@syncBackupKeepValue": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "syncBackupKeepUnlimited": "Unlimited (never delete)",
+  "syncBackupPruned": "Removed {count} old backups",
+  "@syncBackupPruned": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
   "syncBackupDone": "Backed up today: {file}",
   "@syncBackupDone": {
     "placeholders": {

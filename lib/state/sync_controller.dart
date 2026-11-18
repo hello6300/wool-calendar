@@ -44,6 +44,9 @@ class SyncController extends ChangeNotifier {
   /// 本次同步实际写出的备份文件（相对路径）；没备份就是 null。
   String? _backupPath;
 
+  /// 本次同步清理掉的旧备份数量（0 = 没删，或保留份数设为「不限」）。
+  int _prunedBackups = 0;
+
   /// 最近一次备份写出的文件，用来在「今天已经备份过」时继续给用户看。
   String? _lastBackupPath;
 
@@ -58,6 +61,7 @@ class SyncController extends ChangeNotifier {
   DateTime? get lastSyncAt => _lastSyncAt;
   DateTime? get lastBackupAt => _lastBackupAt;
   String? get backupPath => _backupPath;
+  int get prunedBackups => _prunedBackups;
 
   /// 今天是否已经备份过（含只记了时间、没记文件名的旧数据）。
   bool get backedUpToday {
@@ -65,6 +69,10 @@ class SyncController extends ChangeNotifier {
     if (at == null) return false;
     return !WoolSyncService.needsDailyBackup(at, DateTime.now());
   }
+
+  /// 「保留最近 N 份」这一策略当前是否生效（备份关掉或选了「不限」时为 false）。
+  bool get backupPruneEnabled =>
+      _settings.dailyBackup && !_settings.keepsUnlimitedBackups;
 
   /// 界面上要显示的「今日备份」：本次刚写的不说，今天早先备份过的也继续显示，
   /// 否则第二次同步做完提示就消失了，用户会以为今天没备份。
@@ -160,6 +168,7 @@ class SyncController extends ChangeNotifier {
     _statusCode = null;
     _stats = null;
     _backupPath = null;
+    _prunedBackups = 0;
     notifyListeners();
 
     final now = DateTime.now();
@@ -195,6 +204,23 @@ class SyncController extends ChangeNotifier {
       await _settingsStore.markSynced(now);
       _lastSyncAt = now;
       _stats = outcome.stats;
+
+      // 清理超出保留份数的旧备份。
+      // 放在主流程之后：删文件失败（服务器不支持 DELETE、只读权限等）不该把
+      // 一次已经成功的同步变成失败，所以这里吞掉异常，只是不报删除数。
+      // 条件里不看「今天是否已备份」—— 用户把 30 改成 3 之后，下次同步就该清掉，
+      // 不能等到明天才生效（判定见 backupPruneEnabled）。
+      if (backupPruneEnabled) {
+        try {
+          _prunedBackups = await service.pruneBackups(
+            remotePath: _settings.remotePath,
+            keep: _settings.effectiveBackupKeep,
+          );
+        } on Object catch (error) {
+          debugPrint('[sync] 备份清理跳过：$error');
+          _prunedBackups = 0;
+        }
+      }
     } on SyncException catch (error) {
       _failure = error.failure;
       _detail = error.detail;
